@@ -1,5 +1,6 @@
 ﻿using Comfort.Common;
 using EFT;
+using EFT.InventoryLogic;
 using HarmonyLib;
 using System;
 using UnityEngine;
@@ -50,7 +51,7 @@ namespace HandsAreNotBusy
 
         private void FixHandsController(Player player)
         {
-            InventoryControllerClass inventoryController = Traverse.Create(player).Field("_inventoryController").GetValue<InventoryControllerClass>();
+            InventoryControllerClass inventoryController = player.GClass2761_0;
             if (inventoryController != null)
             {
                 int length = inventoryController.List_0.Count;
@@ -62,7 +63,7 @@ namespace HandsAreNotBusy
                     {
                         inventoryController.RemoveActiveEvent(queuedEvent);
                     }
-                    HANB_Plugin.HANB_Logger.LogInfo($"Cleared {args.Length} stuck inventory operations.");
+                    HANB_Plugin.HANB_Logger.LogInfo($"Cleared {length} stuck inventory operations.");
                 }
 
                 AbstractHandsController handsController = player.HandsController;
@@ -71,21 +72,27 @@ namespace HandsAreNotBusy
                 {
                     player.SpawnController(player.method_109());
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
-                    HANB_Plugin.HANB_Logger.LogWarning("Stopped exception when spawning controller.");
+                    HANB_Plugin.HANB_Logger.LogWarning("Stopped exception when spawning controller. InnerException: " + ex.InnerException);
                 }
 
                 if (player.LastEquippedWeaponOrKnifeItem != null)
                 {
-                    player.TrySetLastEquippedWeapon();
+                    InteractionsHandlerClass.Discard(player.LastEquippedWeaponOrKnifeItem, inventoryController, true, true);
+
+                    player.ProcessStatus = EProcessStatus.None;
+                    player.TrySetLastEquippedWeapon();                    
                 }
                 else
                 {
+                    player.ProcessStatus = EProcessStatus.None;
                     player.SetFirstAvailableItem(new Callback<IHandsController>(PlayerOwner.Class1511.class1511_0.method_0));
                 }
+
                 player.SetInventoryOpened(false);
                 handsController?.Destroy();
+
                 if (handsController != null)
                 {
                     Destroy(handsController);
