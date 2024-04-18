@@ -1,11 +1,8 @@
 ﻿using Comfort.Common;
 using EFT;
-using EFT.InventoryLogic;
 using HarmonyLib;
 using System;
 using UnityEngine;
-
-
 using static EFT.Player;
 
 namespace HandsAreNotBusy
@@ -66,7 +63,14 @@ namespace HandsAreNotBusy
                     HANB_Plugin.HANB_Logger.LogInfo($"Cleared {length} stuck inventory operations.");
                 }
 
-                AbstractHandsController handsController = player.HandsController;
+                AbstractHandsController handsController = player.HandsController;                
+
+                if (handsController is FirearmController currentFirearmController)
+                {
+                    player.MovementContext.OnStateChanged -= currentFirearmController.method_14;
+                    player.Physical.OnSprintStateChangedEvent -= currentFirearmController.method_13;
+                    currentFirearmController.RemoveBallisticCalculator();
+                }
 
                 try
                 {
@@ -82,7 +86,7 @@ namespace HandsAreNotBusy
                     InteractionsHandlerClass.Discard(player.LastEquippedWeaponOrKnifeItem, inventoryController, true, true);
 
                     player.ProcessStatus = EProcessStatus.None;
-                    player.TrySetLastEquippedWeapon();                    
+                    player.TrySetLastEquippedWeapon();
                 }
                 else
                 {
