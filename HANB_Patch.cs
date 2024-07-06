@@ -1,6 +1,6 @@
-﻿using Aki.Reflection.Patching;
-using Comfort.Common;
+﻿using Comfort.Common;
 using EFT;
+using SPT.Reflection.Patching;
 using System.Reflection;
 
 namespace HandsAreNotBusy
@@ -9,15 +9,20 @@ namespace HandsAreNotBusy
     {
         protected override MethodBase GetTargetMethod()
         {
-            return typeof(BaseLocalGame<GamePlayerOwner>).GetMethod(nameof(BaseLocalGame<GamePlayerOwner>.vmethod_1));
+            return typeof(GameWorld).GetMethod(nameof(GameWorld.RegisterPlayer));
         }
 
         [PatchPostfix]
-        public static void PostFix()
+        public static void PostFix(IPlayer iPlayer)
         {
-            if (Singleton<GameWorld>.Instance.MainPlayer == null)
+            if (iPlayer == null)
             {
                 HANB_Plugin.HANB_Logger.LogError("Could not add component, player was null!");
+                return;
+            }
+
+            if (!iPlayer.IsYourPlayer)
+            {
                 return;
             }
 

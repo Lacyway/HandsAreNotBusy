@@ -48,7 +48,7 @@ namespace HandsAreNotBusy
 
         private void FixHandsController(Player player)
         {
-            InventoryControllerClass inventoryController = player.GClass2761_0;
+            InventoryControllerClass inventoryController = player.InventoryControllerClass;
             if (inventoryController != null)
             {
                 int length = inventoryController.List_0.Count;
@@ -74,7 +74,7 @@ namespace HandsAreNotBusy
 
                 try
                 {
-                    player.SpawnController(player.method_109());
+                    player.SpawnController(player.method_111());
                 }
                 catch (Exception ex)
                 {
@@ -91,7 +91,7 @@ namespace HandsAreNotBusy
                 else
                 {
                     player.ProcessStatus = EProcessStatus.None;
-                    player.SetFirstAvailableItem(new Callback<IHandsController>(PlayerOwner.Class1511.class1511_0.method_0));
+                    player.SetFirstAvailableItem(new Callback<IHandsController>(PlayerOwner.Class1537.class1537_0.method_0));
                 }
 
                 player.SetInventoryOpened(false);
