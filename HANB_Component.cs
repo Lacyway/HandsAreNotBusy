@@ -59,7 +59,7 @@ namespace HandsAreNotBusy
 					inventoryController.List_0.CopyTo(args);
 					foreach (GEventArgs1 queuedEvent in args)
 					{
-						inventoryController.RemoveActiveEvent(queuedEvent);
+                        inventoryController.RemoveActiveEvent(queuedEvent);
 					}
 					HANB_Plugin.HANB_Logger.LogInfo($"Cleared {length} stuck inventory operations.");
 				}
@@ -75,7 +75,7 @@ namespace HandsAreNotBusy
 
 				try
 				{
-					player.SpawnController(player.method_127());
+					player.SpawnController(player.method_156());
 				}
 				catch (Exception ex)
 				{
@@ -92,7 +92,7 @@ namespace HandsAreNotBusy
 				else
 				{
 					player.ProcessStatus = EProcessStatus.None;
-					player.SetFirstAvailableItem(new Callback<IHandsController>(PlayerOwner.Class1643.class1643_0.method_0));
+					player.SetFirstAvailableItem(new Callback<IHandsController>(PlayerOwner.Class1667.class1667_0.method_0));
 				}
 
 				player.SetInventoryOpened(false);
