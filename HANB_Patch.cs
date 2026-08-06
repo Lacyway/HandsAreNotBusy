@@ -5,7 +5,7 @@ using System.Reflection;
 
 namespace HandsAreNotBusy;
 
-internal class HANB_Patch : ModulePatch
+internal sealed class HANB_Patch : ModulePatch
 {
     protected override MethodBase GetTargetMethod()
     {

@@ -1,18 +1,18 @@
-﻿using Comfort.Common;
+﻿using System;
+using Comfort.Common;
 using EFT;
 using EFT.InventoryLogic;
 using HarmonyLib;
-using System;
 using UnityEngine;
 using static EFT.Player;
 
 namespace HandsAreNotBusy;
 
-internal class HANB_Component : MonoBehaviour
+internal sealed class HANB_Component : MonoBehaviour
 {
     private LocalPlayer _player;
 
-    protected void Awake()
+    private void Awake()
     {
         _player = (LocalPlayer)Singleton<GameWorld>.Instance.MainPlayer;
 
@@ -29,7 +29,7 @@ internal class HANB_Component : MonoBehaviour
         }
     }
 
-    protected void Update()
+    private void Update()
     {
         if (!Singleton<GameWorld>.Instantiated)
         {
@@ -49,33 +49,33 @@ internal class HANB_Component : MonoBehaviour
 
     private void FixHandsController(Player player)
     {
-        InventoryController inventoryController = player.InventoryController;
+        var inventoryController = player.InventoryController;
         if (inventoryController != null)
         {
-            int length = inventoryController.List_0.Count;
+            var length = inventoryController.ActiveEvents.Count;
             if (length > 0)
             {
-                GEventArgs1[] args = new GEventArgs1[length];
-                inventoryController.List_0.CopyTo(args);
-                foreach (GEventArgs1 queuedEvent in args)
+                var args = new ItemEventArgs[length];
+                inventoryController.ActiveEvents.CopyTo(args);
+                foreach (var queuedEvent in args)
                 {
                     inventoryController.RemoveActiveEvent(queuedEvent);
                 }
                 HANB_Plugin.HANB_Logger.LogInfo($"Cleared {length} stuck inventory operations.");
             }
 
-            AbstractHandsController handsController = player.HandsController;
+            var handsController = player.HandsController;
 
             if (handsController is FirearmController currentFirearmController)
             {
-                player.MovementContext.OnStateChanged -= currentFirearmController.method_17;
-                player.Physical.OnSprintStateChangedEvent -= currentFirearmController.method_16;
+                player.MovementContext.OnStateChanged -= currentFirearmController.StateChangedHandler;
+                player.Physical.OnSprintStateChangedEvent -= currentFirearmController.SprintStateChangedEvent;
                 currentFirearmController.RemoveBallisticCalculator();
             }
 
             try
             {
-                player.SpawnController(player.method_162());
+                player.SpawnController(player.CG_Proceed());
             }
             catch (Exception ex)
             {
@@ -84,7 +84,7 @@ internal class HANB_Component : MonoBehaviour
 
             if (player.LastEquippedWeaponOrKnifeItem != null)
             {
-                InteractionsHandlerClass.Discard(player.LastEquippedWeaponOrKnifeItem, inventoryController, true);
+                ItemManipulator.Discard(player.LastEquippedWeaponOrKnifeItem, inventoryController, true);
 
                 player.ProcessStatus = EProcessStatus.None;
                 player.TrySetLastEquippedWeapon();
