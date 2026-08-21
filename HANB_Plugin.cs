@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace HandsAreNotBusy;
 
-[BepInPlugin("com.lacyway.hanb", "HandsAreNotBusy", "1.7.0")]
+[BepInPlugin("com.lacyway.hanb", "HandsAreNotBusy", "1.7.1")]
 internal sealed class HANB_Plugin : BaseUnityPlugin
 {
     internal static ConfigEntry<KeyboardShortcut> ResetKey;
